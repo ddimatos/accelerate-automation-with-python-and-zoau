@@ -49,7 +49,7 @@ if [ -n "$1" ]; then
         # Case: Write ddiff out to a new data set.
         # Maybe a dcp here then append diff to get a complete concat
         if [ -n "$3" ]; then
-            echo "Case: Write ddiff out to a new data set."
+            #echo "Case: Write ddiff out to a new data set."
             delta=`ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-84`
             printf '%s' "$delta" | decho $3
             delta=`ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-84`
@@ -59,14 +59,14 @@ if [ -n "$1" ]; then
 
         # Case: Write DS1 into DS2 (reverse the write order)
         if [[ "$reverse" == "true" ]]; then
-            echo "Case: Write DS1 diff into DS2 (reverse the write order)"
-            delta=`ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-84 | tr '\n' ' '`
+            #echo "Case: Write DS1 diff into DS2 (reverse the write order)"
+            delta=`ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-84`
             echo "$delta" | decho -a $2
             exit
         fi
 
-        echo "Case: Write DS2 diff into DS1"
-        delta=`ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-84 | tr '\n' ' '`
+        #echo "Case: Write DS2 diff into DS1"
+        delta=`ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-84`
         echo "$delta" | decho -a $1
         exit
     fi

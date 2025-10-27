@@ -1,5 +1,20 @@
 #!/bin/sh
 
+ENV_SOURCE_FILE="../../.env"
+export SEP_LINE="-------------------------------------------------------------------------------"
+
+# ---------------------------------------------------------------------
+# Place your secrets in a '.env' file in project root for auto sourcing
+# ---------------------------------------------------------------------
+
+if [ -f "$ENV_SOURCE_FILE" ]; then
+  echo "[INFO] Sourcing $ENV_SOURCE_FILE."
+  source "$ENV_SOURCE_FILE"
+else
+  echo "[WARN] There is no environment file $ENV_SOURCE_FILE, please be\
+  sure to configure script variables'USER' and 'HOST' in this script."
+fi
+
 # ---------------------------------------------------------------------
 # Export environment variables
 # ---------------------------------------------------------------------
@@ -13,12 +28,10 @@ export TMP_FILE=/tmp/tmp.txt
 # ---------------------------------------------------------------------
 # Copy local file content to UNIX System Services files
 # ---------------------------------------------------------------------
-echo "Copying source employee data set to USS"
+echo "[INFO] Copying data employee data to z/OS."
 tail -n +3 ../data/${SRC_EMP_FILE_NAME} > ${TMP_FILE}
 scp -O ${TMP_FILE} ${USER}@${HOST}:/tmp/${SRC_EMP_FILE_NAME}
 rm -rf ${TMP_FILE}
-
-echo "Copying added employee data set to USS"
 tail -n +3 ../data/${ADD_EMP_FILE_NAME} > ${TMP_FILE}
 scp -O ${TMP_FILE} ${USER}@${HOST}:/tmp/${ADD_EMP_FILE_NAME}
 rm -rf ${TMP_FILE}
@@ -26,46 +39,50 @@ rm -rf ${TMP_FILE}
 # ---------------------------------------------------------------------
 # Copy a templated ssh '.profile' to be used by the script
 # ---------------------------------------------------------------------
-echo "Copying profile to '/.profile"
+echo "[INFO] Copying profile to UNIX System Services."
 scp -O ../data/profile ${USER}@${HOST}:/.profile
 
 # ---------------------------------------------------------------------
 # Create and populated z/OS datasets
 # ---------------------------------------------------------------------
-echo "Create and populate z/OS datasets"
+echo "[INFO] Create and populate z/OS datasets."
 SSH_OUTPUT=$(ssh -q ${USER}@${HOST} ". ./.profile; \
 # Remove any pre-existing datasets
 drm -f ${SRC_EMP_FILE_NAME} > /dev/null 2>&1; \
-if [ \$? -eq 0 ]; then echo "drm -f ${SRC_EMP_FILE_NAME} executed successfully."; else echo "drm -f ${SRC_EMP_FILE_NAME} failed."; fi; \
+if [ \$? -eq 0 ]; then echo "[INFO] drm -f ${SRC_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] drm -f ${SRC_EMP_FILE_NAME} failed."; fi; \
 
 # Remove any pre-existing datasets
 drm -f ${ADD_EMP_FILE_NAME}> /dev/null 2>&1; \
-if [ \$? -eq 0 ]; then echo "drm -f ${ADD_EMP_FILE_NAME} executed successfully."; else echo "drm -f ${ADD_EMP_FILE_NAME} failed."; fi; \
+if [ \$? -eq 0 ]; then echo "[INFO] drm -f ${ADD_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] drm -f ${ADD_EMP_FILE_NAME} failed."; fi; \
+
+# Remove any pre-existing datasets
+drm -f ${NEW_EMP_FILE_NAME}> /dev/null 2>&1; \
+if [ \$? -eq 0 ]; then echo "[INFO] drm -f ${NEW_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] drm -f ${NEW_EMP_FILE_NAME} failed."; fi; \
 
 # Create empty sequential dataset
 dtouch -tseq ${SRC_EMP_FILE_NAME}; \
-if [ \$? -eq 0 ]; then echo "dtouch -tseq ${SRC_EMP_FILE_NAME} executed successfully."; else echo "dtouch -tseq ${SRC_EMP_FILE_NAME} failed."; fi; \
+if [ \$? -eq 0 ]; then echo "[INFO] dtouch -tseq ${SRC_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] dtouch -tseq ${SRC_EMP_FILE_NAME} failed."; fi; \
 
 # Create empty sequential dataset
 dtouch -tseq ${ADD_EMP_FILE_NAME}; \
-if [ \$? -eq 0 ]; then echo "dtouch -tseq ${ADD_EMP_FILE_NAME} executed successfully."; else echo "dtouch -tseq ${ADD_EMP_FILE_NAME} failed."; fi; \
+if [ \$? -eq 0 ]; then echo "[INFO] dtouch -tseq ${ADD_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] dtouch -tseq ${ADD_EMP_FILE_NAME} failed."; fi; \
 
 # Create empty sequential dataset
 dtouch -tseq ${NEW_EMP_FILE_NAME}; \
-if [ \$? -eq 0 ]; then echo "dtouch -tseq ${NEW_EMP_FILE_NAME} executed successfully."; else echo "dtouch -tseq ${NEW_EMP_FILE_NAME} failed."; fi; \
+if [ \$? -eq 0 ]; then echo "[INFO] dtouch -tseq ${NEW_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] dtouch -tseq ${NEW_EMP_FILE_NAME} failed."; fi; \
 
 # Copy text source into dataset
 dcp /tmp/${SRC_EMP_FILE_NAME} ${SRC_EMP_FILE_NAME}; \
-if [ \$? -eq 0 ]; then echo "dcp /tmp/${SRC_EMP_FILE_NAME} ${SRC_EMP_FILE_NAME} executed successfully."; else echo "dcp /tmp/${SRC_EMP_FILE_NAME} ${SRC_EMP_FILE_NAME} failed."; fi; \
+if [ \$? -eq 0 ]; then echo "[INFO] dcp /tmp/${SRC_EMP_FILE_NAME} ${SRC_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] dcp /tmp/${SRC_EMP_FILE_NAME} ${SRC_EMP_FILE_NAME} failed."; fi; \
 
 # Copy text source into dataset
 dcp /tmp/${ADD_EMP_FILE_NAME} ${ADD_EMP_FILE_NAME}; \
-if [ \$? -eq 0 ]; then echo "dcp /tmp/${ADD_EMP_FILE_NAME} ${ADD_EMP_FILE_NAME} executed successfully."; else echo "dcp /tmp/${ADD_EMP_FILE_NAME} ${ADD_EMP_FILE_NAME} failed."; fi; \
+if [ \$? -eq 0 ]; then echo "[INFO] dcp /tmp/${ADD_EMP_FILE_NAME} ${ADD_EMP_FILE_NAME} executed successfully."; else echo "[ERROR] dcp /tmp/${ADD_EMP_FILE_NAME} ${ADD_EMP_FILE_NAME} failed."; fi; \
 
 # Clean up text files
 rm -rf /tmp/${SRC_EMP_FILE_NAME} /tmp/${ADD_EMP_FILE_NAME};")
 
-echo "$SSH_OUTPUT"
+echo "[INFO] Results ${SSH_OUTPUT}"
 
 # ---------------------------------------------------------------------
 # Copy and run python file dconcat.py
