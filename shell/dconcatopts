@@ -1,14 +1,8 @@
 #!/bin/sh
 
-# Must have 3 args (cmd, ds1, ds2)
-# Append ds2 to ds1 default behavior (grep "^I -")
-# Append ds1 to ds2, grep "^D -" 
-# Copy diff into new data set.
-
-
-# dconcat DS1 DS2
-
-# ddiff employee.source.seq employee.added.seq | tail -n +7|grep "^I -" |cut -c5-85
+# ---------------------------------------------------------------------
+# Example arg parser to experiment with.
+# ---------------------------------------------------------------------
 
 help()
 {
