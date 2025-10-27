@@ -1,5 +1,15 @@
 #!/bin/sh
 
+# Must have 3 args (cmd, ds1, ds2)
+# Append ds2 to ds1 default behavior (grep "^I -")
+# Append ds1 to ds2, grep "^D -" 
+# Copy diff into new data set.
+
+
+# dconcat DS1 DS2
+
+# ddiff employee.source.seq employee.added.seq | tail -n +7|grep "^I -" |cut -c5-85
+
 help()
 {
    echo "This utility will find the differences and by default will concatenate"
@@ -40,34 +50,58 @@ done
 shift "$((OPTIND-1))"
 
 if [ -n "$1" ]; then
-    check_option=`echo "$*" |grep "-"`
-    if [ -n "$check_option" ]; then
+    if [[ "$*" =~ "-" ]]; then
         echo "Options must become before values."
         help
         exit 1
     else
+        echo "Remaining argument(s): $*"
+        echo "1 is $1"
+        echo "2 is $2"
+        echo "3 is $3"
+
+
         # Case: Write ddiff out to a new data set.
-        # Maybe a dcp here then append diff to get a complete concat
         if [ -n "$3" ]; then
             echo "Case: Write ddiff out to a new data set."
-            delta=`ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-84`
-            printf '%s' "$delta" | decho $3
-            delta=`ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-84`
-            echo "$delta" | decho -a $3
+            ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-85 | decho $3
+            ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-85 | decho -a $1
             exit
         fi
 
         # Case: Write DS1 into DS2 (reverse the write order)
         if [[ "$reverse" == "true" ]]; then
             echo "Case: Write DS1 diff into DS2 (reverse the write order)"
-            delta=`ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-84 | tr '\n' ' '`
-            echo "$delta" | decho -a $2
+            ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-85 | decho -a $1
             exit
         fi
 
-        echo "Case: Write DS2 diff into DS1"
-        delta=`ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-84 | tr '\n' ' '`
-        echo "$delta" | decho -a $1
+        echo "Case: Write DS2 diff into DS1 (reverse the write order)"
+        ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-85 | decho -a $1
         exit
     fi
 fi
+
+# set -x
+# # Access remaining non-option arguments
+# if [ -n "$1" ]; then
+#   echo "Remaining argument(s): $*"
+# fi
+
+    # if [ "$#" -eq 0 ]; then
+    #     echo "No arguments were passed."
+    #     # Handle the case of no arguments.
+    #     exit 0
+    # fi
+
+
+#     my_flag="true"
+
+# if [[ "$my_flag" == "true" ]]; then
+#   echo "The flag is true."
+# fi
+
+# # Alternatively, if you treat non-empty string as true:
+# if [[ -n "$my_flag" ]]; then
+#   echo "The flag is not empty (considered true)."
+# fi

@@ -13,8 +13,18 @@ lines = result.split('\n')
 new_lines = []
 for line in lines:
    if line.startswith("I -"):
-      new_lines.append(line[4:])
+      new_lines.append(line[4:84])
 
 # For debug purposes
 # for new_line in new_lines:
 #    print(new_line)
+
+#For debug purposes
+for new_line in new_lines:
+   print(new_line)
+   print(len(new_line))
+
+dataset = datasets.create(name="result.concat.seq", dataset_type="SEQ")
+
+for new_line in new_lines:
+    datasets.write("result.concat.seq", new_line, True)

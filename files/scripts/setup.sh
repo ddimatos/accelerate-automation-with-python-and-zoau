@@ -7,6 +7,7 @@ export USER=${MY_USER:="ibmuser"}
 export HOST=${MY_HOST:="hostname"}
 export SRC_EMP_FILE_NAME="employee.source.seq"
 export ADD_EMP_FILE_NAME="employee.added.seq"
+export NEW_EMP_FILE_NAME="employee.all.seq"
 export TMP_FILE=/tmp/tmp.txt
 
 # ---------------------------------------------------------------------
@@ -48,6 +49,10 @@ if [ \$? -eq 0 ]; then echo "dtouch -tseq ${SRC_EMP_FILE_NAME} executed successf
 # Create empty sequential dataset
 dtouch -tseq ${ADD_EMP_FILE_NAME}; \
 if [ \$? -eq 0 ]; then echo "dtouch -tseq ${ADD_EMP_FILE_NAME} executed successfully."; else echo "dtouch -tseq ${ADD_EMP_FILE_NAME} failed."; fi; \
+
+# Create empty sequential dataset
+dtouch -tseq ${NEW_EMP_FILE_NAME}; \
+if [ \$? -eq 0 ]; then echo "dtouch -tseq ${NEW_EMP_FILE_NAME} executed successfully."; else echo "dtouch -tseq ${NEW_EMP_FILE_NAME} failed."; fi; \
 
 # Copy text source into dataset
 dcp /tmp/${SRC_EMP_FILE_NAME} ${SRC_EMP_FILE_NAME}; \
@@ -91,6 +96,3 @@ echo "$SSH_OUTPUT"
 # dls ${SRC_EMP_FILE_NAME};
 # dls ${ADD_EMP_FILE_NAME};
 # EOF`
-
-
-gh/accelerate-automation-with-python-and-zoau/python/dconcat.py
