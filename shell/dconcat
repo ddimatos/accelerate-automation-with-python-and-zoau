@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ddiff employee.source.seq employee.added.seq | tail -n +7|grep "^I -" |cut -c5-85

@@ -63,6 +63,10 @@ rm -rf /tmp/${SRC_EMP_FILE_NAME} /tmp/${ADD_EMP_FILE_NAME};")
 echo "$SSH_OUTPUT"
 
 # ---------------------------------------------------------------------
+# Copy and run python file dconcat.py
+# ---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
 # Ignore entries from here down
 # ---------------------------------------------------------------------
 # Working heardoc example
@@ -89,3 +93,4 @@ echo "$SSH_OUTPUT"
 # EOF`
 
 
+gh/accelerate-automation-with-python-and-zoau/python/dconcat.py
