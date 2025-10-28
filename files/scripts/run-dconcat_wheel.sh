@@ -34,14 +34,15 @@ env_setup
 export USER=${MY_USER:="ibmuser"}
 export HOST=${MY_HOST:="hostname"}
 export DCONCAT="module_example.py"
-export DCONCAT_MODULE="dconcat_module.py"
+export WHEEL_DIR="wheel"
 
 # ---------------------------------------------------------------------
 # Copy local file content to UNIX System Services files
 # ---------------------------------------------------------------------
 echo "Copying python source file dconcat.py to USS"
 scp -O ../../python/${DCONCAT} ${USER}@${HOST}:/tmp/${DCONCAT}
-scp -O ../../python/module/${DCONCAT_MODULE} ${USER}@${HOST}:/tmp/${DCONCAT_MODULE}
+scp -O -r ../../python/${WHEEL_DIR} ${USER}@${HOST}:/tmp/${WHEEL_DIR}
+
 # ---------------------------------------------------------------------
 # Running dconcat
 # ---------------------------------------------------------------------
@@ -54,12 +55,15 @@ echo "[INFO] DS1: Source dataset ${SRC_EMP_FILE_NAME}"
 echo "[INFO] DS2: Changes dataset ${ADD_EMP_FILE_NAME}"
 echo "[INFO] DS3: Merged dataset ${NEW_EMP_FILE_NAME}"
 SSH_OUTPUT=$(ssh -q ${USER}@${HOST} ". ./.profile; \
-rm -rf /tmp/lib/module; \
-mkdir -p /tmp/lib/module; \
-mv /tmp/${DCONCAT_MODULE} /tmp/lib/module; \
+mkdir -p /tmp/lib; \
+python3 -m pip install --no-input --upgrade build --target /tmp/lib; \
+cd /tmp/wheel; \
+python3 -m build; \
+pip install /tmp/wheel/dist/dconcat_module-0.0.1-py3-none-any.whl --target /tmp/lib; \
+cd /tmp; \
 chtag -tc IBM-1047 /tmp/${DCONCAT}; \
 chmod 755 /tmp/${DCONCAT}; \
 python3 /tmp/${DCONCAT}; \
-rm -rf /tmp/lib/module; ")
+rm -rf /tmp/*")
 echo "[INFO] Results \n${SSH_OUTPUT}"
 echo

@@ -2,7 +2,7 @@
 export ZOAU_HOME=/zoau/v1.4.0
 export PATH=${ZOAU_HOME}/bin:${PYTHON_HOME}/bin:${PATH}
 export LIBPATH=${ZOAU_HOME}/lib:${LIBPATH}
-export PYTHONPATH=${ZOAU_HOME}/lib/3.12:${PYTHONPATH}
+export PYTHONPATH=${ZOAU_HOME}/lib/3.12:${PYTHONPATH}:/tmp/lib/
 export MANPATH=${ZOAU_HOME}/docs/%L:${MANPATH}
 export _BPXK_AUTOCVT=ON
 
