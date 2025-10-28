@@ -1,5 +1,6 @@
 from zoautil_py import datasets
 
+# Difference concatenation utility
 def dconcat(source: str = None, change:str = None, merge: str = None, reverse: bool = False) -> None:
    """
    This utility will find the differences between two datasets will concatenate the
@@ -51,7 +52,7 @@ def dconcat(source: str = None, change:str = None, merge: str = None, reverse: b
          for source_line in source_lines:
             datasets.write(source, source_line, True)
 
-
+# Print the source dataset differences
 def ddiff_source(source: str = None, change:str = None) -> str:
     """
     This method will return the differences found in the source dataset
@@ -81,7 +82,7 @@ def ddiff_source(source: str = None, change:str = None) -> str:
 
     return '\n'.join(source_lines)
 
-
+# Print the changed dataset differences
 def ddiff_change(source: str = None, change:str = None) -> str:
     """
     This method will return the differences found in the change dataset
@@ -111,6 +112,6 @@ def ddiff_change(source: str = None, change:str = None) -> str:
 
     return '\n'.join(source_lines)
 
-
+# Print any datasets content
 def data_set_print(source: str = None):
    return datasets.read(source)

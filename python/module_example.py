@@ -22,6 +22,5 @@ def main() -> None:
     print(SEP_LINE +"[INFO] Showing change dataset content." + SEP_LINE)
     print(data_set_print(source=CHANGE_DATASET))
 
-
 if __name__ == "__main__":
     main()
