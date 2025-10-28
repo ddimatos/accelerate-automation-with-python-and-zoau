@@ -12,13 +12,13 @@ reverse=''
 help()
 {
    echo "This utility will find the differences and by default will concatenate"
-   echo "the compared-dataset to the src-dataset."
+   echo "the change-dataset to the src-dataset."
    echo "The default behavior can be reversed so that src-dataset is appended to"
-   echo "compared-dataset by using option '-r'"
-   echo "If a third data set is provided, option '-o' is ignored and the two"
+   echo "change-dataset by using option '-r'"
+   echo "If a third merge dataset is provided, option '-r' is ignored and the two"
    echo "datasets will be merged without any duplicates"
    echo
-   echo "Syntax: dconcat [-o|h] <src-dataset> <compared-dataset> <new-dataset>"
+   echo "Syntax: dconcat [-o|h] <src-dataset> <change-dataset> <merge-dataset>"
    echo "options:"
    echo "r     'true' to reverse the contamination order."
    echo "h     Print this Help."
@@ -57,10 +57,9 @@ if [ -n "$1" ]; then
         help
         exit 1
     else
-        # Case: Write ddiff out to a new data set.
         # Maybe a dcp here then append diff to get a complete concat
         if [ -n "$3" ]; then
-            #echo "Case: Write ddiff out to a new data set."
+            #echo "DS1 and DS2 are diffed and inserted into D3"
             delta=`ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-84`
             printf '%s' "$delta" | decho $3
             delta=`ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-84`
@@ -68,17 +67,19 @@ if [ -n "$1" ]; then
             exit
         fi
 
-        # Case: Write DS1 into DS2 (reverse the write order)
         if [[ "$reverse" == "true" ]]; then
-            #echo "Case: Write DS1 diff into DS2 (reverse the write order)"
+            # echo "DS1 and DS2 are diffed and inserted into DS2 (reverse order)"
             delta=`ddiff "$1" "$2" | tail -n +7|grep "^D -" |cut -c5-84`
             echo "$delta" | decho -a $2
             exit
         fi
 
-        #echo "Case: Write DS2 diff into DS1"
+        # echo "DS1 and DS2 are diffed and inserted into DS1"
         delta=`ddiff "$1" "$2" | tail -n +7|grep "^I -" |cut -c5-84`
         echo "$delta" | decho -a $1
         exit
     fi
 fi
+
+
+
